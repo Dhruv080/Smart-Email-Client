@@ -1,0 +1,21 @@
+# Smart Email Client Requirements
+# This project primarily uses uv for dependency management: "uv sync --all-extras"
+# This requirements.txt file is provided for compatibility with pip users
+
+# Core Gmail API dependencies
+google-api-python-client>=2.0.0
+google-auth-httplib2>=0.1.0
+google-auth-oauthlib>=0.5.0
+
+# Development and testing dependencies
+pytest>=7.0.0
+pytest-cov>=4.0.0
+pytest-mock>=3.10.0
+
+# Code quality tools
+mypy>=1.0.0
+ruff>=0.1.0
+
+# Documentation
+mkdocs>=1.5.0
+mkdocs-material>=9.0.0

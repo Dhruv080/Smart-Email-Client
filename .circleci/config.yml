@@ -1,0 +1,61 @@
+version: 2.1
+
+executors:
+  python-executor:
+    docker:
+      - image: cimg/python:3.10
+    working_directory: ~/project
+
+jobs:
+  setup-and-test:
+    executor: python-executor
+    steps:
+      - checkout
+      
+      - run:
+          name: Install uv
+          command: |
+            curl -LsSf https://astral.sh/uv/install.sh | sh
+            echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> $BASH_ENV
+      
+      - run:
+          name: Setup workspace
+          command: |
+            uv sync --all-extras
+      
+      - run:
+          name: Run ruff format check
+          command: uv run ruff format --check .
+      
+      - run:
+          name: Run ruff lint
+          command: uv run ruff check .
+      
+      - run:
+          name: Run mypy
+          command: uv run mypy src/
+      
+      - run:
+          name: Run tests
+          command: |
+            uv run pytest --cov=src --cov-report=html --cov-report=xml --junitxml=test-results.xml
+      
+      - run:
+          name: Build documentation
+          command: uv run mkdocs build
+      
+      - store_test_results:
+          path: test-results.xml
+      
+      - store_artifacts:
+          path: htmlcov
+          destination: coverage-report
+      
+      - store_artifacts:
+          path: site
+          destination: documentation
+
+workflows:
+  build-and-test:
+    jobs:
+      - setup-and-test
